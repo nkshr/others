@@ -11,12 +11,16 @@ using namespace std;
 using namespace cv;
 
 double data[900][2];
+double inliers[300][2];
 int num_data = sizeof(data) / sizeof(data[0]);
+int num_inliers = sizeof(inliers) / sizeof(inliers[0]);
+int it = 0;
 double threshold = 8000000;
 
 int get_random(int min, int max);
 void solve_equations(double &a, double &b);
-bool final_check(double a, double b);
+void re_estimate(double &a, double &b);
+void push_inlier(double x, double y);
 
 int main(int argc, char **argv)
 {
@@ -110,6 +114,7 @@ void solve_equations(double &a, double &b)
 	double p_range;	//a permissible range
 	p_range = 30;
 	bool found = false;
+	it = 0;
 	for (int i = 0; i < 373; i++)
 	{
 		x1 = get_random(0, 899);
@@ -124,30 +129,39 @@ void solve_equations(double &a, double &b)
 		for (int j = 0; j < num_data; j++)
 		{
 			if (data[j][1] <= (a * data[j][0] + b + 10) && data[j][1] >= (a * data[j][0] + b - 10))
-				counter++;
-			if (counter > 100)
 			{
-				found = true;
-				break;
+				push_inlier(data[j][0], data[j][1]);
+				counter++;
 			}
 		}
-		if (found)
+		if (counter > num_inliers)
 		{
-			if (final_check(a, b))
-				break;
-			found = false;
+			re_estimate(a, b);
+			break;
 		}
 	}
 }
 
-bool final_check(double a, double b)
+void re_estimate(double &a, double &b)
 {
-	double diff = 0;
-	for (int i = 0; i < num_data; i++)
+	a = b = 0;
+	//A = sigma (x * y), B = sigma (x), C = sigma (y), D = sigma (x ^ 2) 
+	double A, B, C, D;
+	A = B = C = D = 0;
+	for (int i = 0; i < num_inliers; ++i)
 	{
-		diff += pow(data[i][1] - (a * data[i][0] + b), 2.0);
+		A += inliers[i][0] * inliers[i][1];
+		B += inliers[i][0];
+		C += inliers[i][1];
+		D += pow(inliers[i][0], 2.0);
 	}
-	if (diff > threshold)
-		return false;
-	return true;
+	a = (num_inliers * A - B * C) / (num_inliers * D - pow(B, 2.0));
+	b = (D * C - A * B) / (num_inliers * D - pow(B, 2.0));
+}
+
+void push_inlier(double x, double y)
+{
+	inliers[it][0] = x;
+	inliers[it][1] = y;
+	++it;
 }
