@@ -23,8 +23,9 @@ private:
 		for (int i = 0; i < 4; i++)
 		{
 			out[i] = 0;
-			out[i] += data_list[i].input[0] * w[0] - theta;
-			out[i] += data_list[i].input[1] * w[1] - theta;
+			out[i] += data_list[i].input[0] * w[0] ;
+			out[i] += data_list[i].input[1] * w[1] ;
+			out[i] -= theta;
 			if (out[i] <= 0)
 				out[i] = 0;
 			else
@@ -66,7 +67,6 @@ private:
 			delta_w = (-1) * epsilon *
 				(out[i] - data_list[i].true_data) * data_list[i].input[1];
 			w[1] += delta_w;
-			//cout << in[i] << endl;
 		}
 	}
 
@@ -76,7 +76,7 @@ public:
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			w[i] = 0.5;
+			w[i] = 0;
 		}
 	};
 	
@@ -98,6 +98,7 @@ public:
 				break;
 			learn();
 		}
+		//cout << w[0] << "	" << w[1] << endl;
 	};
 };
 int main(int argc, char **argv)
