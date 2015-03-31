@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 	or_neu.run();
 
 	/* XOR */
-	/*cout << "**************OR neuron*************" << endl;
+	/*cout << "**************XOR neuron*************" << endl;
 	data d9, d10, d11, d12;
 	d9.input[0] = 0;
 	d9.input[1] = 0;
