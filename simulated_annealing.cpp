@@ -40,7 +40,6 @@ double annealing(double startState, int maxIter, double goalE)
 	bestE = e;
 	for (int iter = 0; iter < maxIter; iter++)
 	{
-		//cout << iter << ": " << state << endl;
 		nextState = NEIGHBOUR(state);
 		nextE = EVAL(nextState);
 		if (nextE < bestE)
@@ -84,10 +83,7 @@ double PROBABILITY(double e1, double e2, double t)
 	if (e1 >= e2)
 		return 1;
 	else
-	{
-		//cout << exp((e1 - e2) / t) << endl;
 		return exp((e1 - e2) / t);
-	}
 }
 
 double random()
