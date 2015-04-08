@@ -10,9 +10,6 @@ double x[7][2] = {{0.038, 0.050}, {0.194, 0.127},
 		     {0.425, 0.094}, {0.626, 0.2122},
 		     {1.253, 0.2729}, {2.500, 0.2665},
 		     {3.740, 0.3317}};
-int iter = 0;
-
-
 
 double calc_gamma(double beta[2], double dst[7])
 {
@@ -40,7 +37,7 @@ void get_t_jacobian(double src[7][2], double dst[2][7])
 
 bool get_inverse(double X[2][2], double X_i[2][2])
 {
-	if((X[0][0] * X[1][1] - X[0][1] * X[1][0]) < 0.1)
+	if((X[0][0] * X[1][1] - X[0][1] * X[1][0]) < 0.0001)
 		return false;
 	X_i[0][0] = (1 / (X[0][0] * X[1][1] - X[0][1] * X[1][0])) *
 		X[1][1];
@@ -53,7 +50,7 @@ bool get_inverse(double X[2][2], double X_i[2][2])
 	return true;
 }
 
-double update(double beta[2], double gamma[7], double jaco[7][2], double t_jaco[2][7], double dst[2])
+void update(double beta[2], double gamma[7], double jaco[7][2], double t_jaco[2][7], double dst[2])
 {
 	calc_gamma(beta, gamma);
 	calc_jacobian(beta, jaco);
@@ -75,8 +72,8 @@ double update(double beta[2], double gamma[7], double jaco[7][2], double t_jaco[
 		temp[0][0] += t_jaco[0][i]*gamma[i];
 		temp[1][0] += t_jaco[1][i]*gamma[i];
 	}
-	dst[0] = beta[0] + temp_inv[0][0]*temp[0][0] + temp_inv[0][1]*temp[1][0];
-	dst[1] = beta[1] + temp_inv[1][0]*temp[0][0] + temp_inv[1][1]*temp[1][0];
+	dst[0] = beta[0] - (temp_inv[0][0]*temp[0][0] + temp_inv[0][1]*temp[1][0]);
+	dst[1] = beta[1] - (temp_inv[1][0]*temp[0][0] + temp_inv[1][1]*temp[1][0]);
 }
 
 int main(int argc, char **argv)
@@ -98,6 +95,10 @@ int main(int argc, char **argv)
 	{
 		update(beta, gamma, jaco, t_jaco, dst);
 		memcpy(beta, dst, sizeof(dst));
+		double buf=0;
+		for(int j=0; j< 7; ++j)
+			buf += pow(gamma[j], 2);
+		cout << buf << endl;
 		cout << beta[0] << " " << beta[1] << endl;
 	}
 	fprintf(gp, "f(x) = (%f*x) / (%f+x)\n", beta[0], beta[1]);
