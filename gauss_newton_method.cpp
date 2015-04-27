@@ -21,8 +21,8 @@ void calc_jacobian(double beta[2], double dst[7][2])
 {
 	for(int i = 0; i < 7; i++)
 	{
-		dst[i][0] = (-x[i][0]) / (beta[1]+x[i][0]);
-		dst[i][1] = (beta[0]*x[i][0]) / pow(beta[1]+x[i][0], 2);
+		dst[i][0] = (x[i][0]) / (beta[1]+x[i][0]);
+		dst[i][1] = (-beta[0]*x[i][0]) / pow(beta[1]+x[i][0], 2);
 	}
 }
 
@@ -72,8 +72,8 @@ void update(double beta[2], double gamma[7], double jaco[7][2], double t_jaco[2]
 		temp[0][0] += t_jaco[0][i]*gamma[i];
 		temp[1][0] += t_jaco[1][i]*gamma[i];
 	}
-	dst[0] = beta[0] - (temp_inv[0][0]*temp[0][0] + temp_inv[0][1]*temp[1][0]);
-	dst[1] = beta[1] - (temp_inv[1][0]*temp[0][0] + temp_inv[1][1]*temp[1][0]);
+	dst[0] = beta[0] + (temp_inv[0][0]*temp[0][0] + temp_inv[0][1]*temp[1][0]);
+	dst[1] = beta[1] + (temp_inv[1][0]*temp[0][0] + temp_inv[1][1]*temp[1][0]);
 }
 
 int main(int argc, char **argv)
