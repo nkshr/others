@@ -1,0 +1,5 @@
+CXX = g++
+MODULES = primal_form steepest_descent
+OBJECTS = $(addsuffix .o, $(MODULES)) 
+svm: $(OBJECTS)	
+	$(CXX) $(OBJECTS) -o svm

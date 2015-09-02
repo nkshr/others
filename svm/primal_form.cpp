@@ -1,10 +1,7 @@
-#include <opencv2/opencv.hpp>
-#include <opencv2/opencv_lib.hpp>
-using namespace cv;
-
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <stdlib.h>
 using namespace std;
 
 #include <time.h>
@@ -20,7 +17,12 @@ int main(int argc, char ** argv)
 {
 	srand((int)time(NULL));
 	FILE *gp;
+
+#ifdef WIN32
 	gp = _popen("gnuplot -persist", "w");
+#else
+	gp = popen("gnuplot -persist", "w");
+#endif
 
 	ofstream X1_ofs("./X1.txt");
 	ofstream X2_ofs("./X2.txt");
