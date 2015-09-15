@@ -21,11 +21,11 @@ struct sum_map
 class map_manager
 {
 private:
-	double ** buf;
+	vector<cloud_pt> pts;
 
 public:
 	map_manager();
-	void update(double * pts);
+	void update(vector<cloud_pt>  pts);
 	void clear();
 	~map_manager();
 };
