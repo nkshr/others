@@ -4,28 +4,35 @@
 using namespace cv;
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 struct cloud_pt
 {
-	Point3f pt;
+	int x, y, z;
 	double luminace;
 };
 
-struct sum_map
-{
-	int index;
-	vector<cloud_pt> pts;
-};
 
 class map_manager
 {
 private:
-	vector<cloud_pt> pts;
+	int max_sdist;
+	ofstream ofs;
+	ifstream ifs;
+	cloud_pt * cpts;
+	bool * cpt_flags;
+	int buf_sz;
+	Point3i position;
 
 public:
-	map_manager();
-	void update(vector<cloud_pt>  pts);
+	map_manager(int buf_sz);
+	void update(cloud_pt * new_pts, int num_cpts);
 	void clear();
+	void load(Point3i pos);
+	void save();
+	void check(Point3i pos);
 	~map_manager();
 };
+
+void split_xyz(char * src, int buf_sz, Point3i &pt);
