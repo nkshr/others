@@ -10,7 +10,7 @@ using namespace std;
 struct cloud_pt
 {
 	int x, y, z;
-	double luminace;
+	double luminance;
 };
 
 

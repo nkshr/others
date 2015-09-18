@@ -2,7 +2,7 @@
 
 map_manager::map_manager(int buf_sz)
 {
-	ofs.open("map.txt");
+	ofs.open("map.txt", ofstream::out | ofstream::in);
 	ifs.open("map.txt");
 	this->buf_sz = buf_sz;
 	cpts = new cloud_pt[buf_sz];
@@ -50,9 +50,11 @@ void map_manager::check(Point3i pos)
 void map_manager::save()
 {
 	char buf[46];
+	ifs.seekg(0);
+
 	for(int i = 0; i < buf_sz; ++i)
 	{
-		while(!ifs.eof())
+		while(true)
 		{
 			ifs >> buf;
 		
@@ -62,13 +64,17 @@ void map_manager::save()
 			   cpts[i].y == pt.y &&
 			   cpts[i].z == pt.z)
 			{
-			
+				long pos = ifs.tellg();
+				ofs.seekp(pos);
+				ofs << cpts[i].x << " " << cpts[i].y << " " << cpts[i].z << " " << cpts[i].luminance << endl;
 				break;
 			}
 			
 			if(ifs.eof())
 			{
-				
+				ofs.seekp(0, ios::end);
+				ofs << cpts[i].x << " " << cpts[i].y << " " << cpts[i].z << " " << cpts[i].luminance << endl;
+				break;
 			}
 		}
 	}
@@ -77,7 +83,7 @@ void map_manager::save()
 void map_manager::load(Point3i pos)
 {
 	check(pos);
-
+	ifs.seekg(0);
 	char buf[46];
 	for(int i = 0; i < buf_sz; ++i)
 	{
